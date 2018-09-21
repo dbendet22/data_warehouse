@@ -33,8 +33,7 @@ csv_name = 'orders_' + yesterday
 def get_api_login():
     admin_url = os.environ['RETAIL_ADMIN_URL']
     api_key = os.environ['RETAIL_API_KEY']
-    api_password = os.environ['RETAIL_API_PASSWORD'] 
-    
+    api_password = os.environ['RETAIL_API_PASSWORD']     
     return admin_url, api_key, api_password
 
 # credentials 
@@ -54,7 +53,7 @@ orders = []
 while current_page <= pages:
   r = requests.get(admin_url + 'orders.json?limit=250&page={0}&status=any&created_at_min=' + yesterday_date + 'T00:00:00-00:00' + '&created_at_max=' + today_date + 'T00:00:00-00:00'.format(current_page), 
   				   auth=(api_key, api_password))
-  x = json.loads(r.content)
+  x = json.loads(r.content.decode("utf-8"))
   orders.append(x) 
   current_page += 1
 
