@@ -22,14 +22,28 @@ import boto3
 from io import StringIO
 from datetime import datetime, timedelta
 import sys
+import datetime
+import pytz
 
+# last day of data (or backfill)
+# yesterday = sys.argv[1]
+yesterday_date = sys.argv[1]
+today_date = sys.argv[2] 
+yesterday = yesterday_date.replace('-','')
+print(yesterday)
+today = today_date.replace('-','')
+print(today)
+csv_name = 'orders_' + yesterday + '_' + today
 
-yesterday = sys.argv[1]
-yesterday_date = sys.argv[2]
-today_date = sys.argv[3] 
-
-csv_name = 'orders_' + yesterday
-
+# # if i only wanted to backfill this table specifically, i could do this: 
+# # yesterday = '20180710'
+# yesterday_date = '2018-07-10'
+# today_date = '2018-10-26'
+# today_date = datetime.strftime(datetime.strptime(today_date, '%Y-%m-%d') + timedelta(1), '%Y-%m-%d')
+# yesterday = yesterday_date.replace('-','')
+# today = today_date.replace('-','')
+# csv_name = 'orders_' + yesterday + '_' + today
+  
 def get_api_login():
     admin_url = os.environ['RETAIL_ADMIN_URL']
     api_key = os.environ['RETAIL_API_KEY']
@@ -40,8 +54,9 @@ def get_api_login():
 admin_url, api_key, api_password = get_api_login()
 
 # get required page count 
-count = json.loads(requests.get(admin_url + 'orders/count.json?status=any&created_at_min=' + yesterday_date + 'T00:00:00-00:00' + '&created_at_max=' + today_date + 'T00:00:00-00:00', 
+count = json.loads(requests.get(admin_url + 'orders/count.json?status=any&created_at_min=' + yesterday_date + 'EST' + '&created_at_max=' + today_date + 'EST', 
 				   auth=(api_key, api_password)).content)['count']
+
 page_size = 250
 pages = math.ceil(count / 250.0)
 
@@ -51,20 +66,35 @@ orders = []
 
 # for all of the pages with records, add each record to the list and move to the next page
 while current_page <= pages:
-  r = requests.get(admin_url + 'orders.json?limit=250&page={0}&status=any&created_at_min=' + yesterday_date + 'T00:00:00-00:00' + '&created_at_max=' + today_date + 'T00:00:00-00:00'.format(current_page), 
+
+  r = requests.get(admin_url + 'orders.json?limit=250&page=' + str(current_page) + '&status=any&created_at_min=' + yesterday_date + 'EST' + '&created_at_max=' + today_date + 'EST', 
   				   auth=(api_key, api_password))
+
   x = json.loads(r.content.decode("utf-8"))
   orders.append(x) 
   current_page += 1
 
+
+# test_list = []
+
+# for page in orders:
+# 	for thing in page['orders']:
+# 		test_list.append(thing['id'])
+
+# test_list.sort() 
+# test_list
+
+
+
 # open csv to write into
-csv_data = open('/Users/davidbendet/Work/coding/src/data_warehouse/tmp_data/orders/' + csv_name + '.csv', 'w')
+csv_data = open('/Users/davidbendet/work/coding/src/data_warehouse/tmp_data/orders/' + csv_name + '.csv', 'w')
 f = csv.writer(csv_data)
 
 # write header row once
 f.writerow(['id', 
 			'closed_at', 
-			'created_at', 
+			'created_at',
+			'created_at_est', 
 			'number', 
 			'test', 
 			'total_price', 
@@ -130,6 +160,7 @@ for page in orders:
 		f.writerow([thing['id'], 
 					pd.to_datetime(thing['closed_at']), 
 					pd.to_datetime(thing['created_at']), 
+					pytz.utc.localize( pd.to_datetime(thing['created_at'])).astimezone(pytz.timezone('America/New_York')), 
 					thing['number'], 
 					thing['test'], 
 					thing['total_price'],
@@ -191,7 +222,6 @@ for page in orders:
 
 # close csv file
 csv_data.close()
-
 
 # send csv to s3
 s3 = boto3.client('s3', aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
