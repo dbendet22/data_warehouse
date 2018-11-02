@@ -25,14 +25,14 @@ import sys
 import datetime
 import pytz
 
+work_path = '/home/ec2-user/src/data_warehouse/'
+
 # last day of data (or backfill)
 # yesterday = sys.argv[1]
 yesterday_date = sys.argv[1]
 today_date = sys.argv[2] 
 yesterday = yesterday_date.replace('-','')
-print(yesterday)
 today = today_date.replace('-','')
-print(today)
 csv_name = 'orders_' + yesterday + '_' + today
 
 # # if i only wanted to backfill this table specifically, i could do this: 
@@ -87,7 +87,7 @@ while current_page <= pages:
 
 
 # open csv to write into
-csv_data = open('/Users/davidbendet/work/coding/src/data_warehouse/tmp_data/orders/' + csv_name + '.csv', 'w')
+csv_data = open(work_path + 'tmp_data/orders/' + csv_name + '.csv', 'w')
 f = csv.writer(csv_data)
 
 # write header row once
@@ -225,7 +225,7 @@ csv_data.close()
 
 # send csv to s3
 s3 = boto3.client('s3', aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
-df = pd.read_csv('~/work/coding/src/data_warehouse/tmp_data/orders/' + csv_name + '.csv')
+df = pd.read_csv(work_path + 'tmp_data/orders/' + csv_name + '.csv')
 csv_buffer = StringIO()
 df.to_csv(csv_buffer, index=False)
 s3_resource = boto3.resource('s3')

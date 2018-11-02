@@ -25,6 +25,8 @@ import sys
 import datetime
 import pytz
 
+work_path = '/home/ec2-user/src/data_warehouse/'
+
 # last day of data (or backfill)
 # yesterday = sys.argv[1]
 yesterday_date = sys.argv[1]
@@ -146,7 +148,7 @@ for item in line_items_list:
 
 # output the list (which is now a list of dictionaries) to a csv
 keys = ['id', 'order_id', 'created_at', 'created_at_est', '_sku', 'name', 'price', 'quantity', 'title', 'variant_title', 'total_discount', 'fulfillable_quantity', 'fulfillment_status', 'gift_card', 'grams', 'product_exists', 'product_id', '_inventory', 'requires_shipping', 'sku', 'tax_lines', 'taxable', 'variant_id', 'variant_inventory_management', 'vendor', 'estimated_ship_date', '_inventory_source', 'test', 'total_tax', 'financial_status', 'cancelled_at', 'order_discount_amount', 'country', 'state', 'city', 'zip_code', 'orders_count']
-with open('/Users/davidbendet/Work/coding/src/data_warehouse/tmp_data/line_items/' + csv_name + '.csv', 'w') as output_file:
+with open(work_path + 'tmp_data/line_items/' + csv_name + '.csv', 'w') as output_file:
 	dict_writer = csv.DictWriter(output_file, keys)
 	dict_writer.writeheader()
 	for line_items in line_items_list:	    
@@ -190,7 +192,7 @@ with open('/Users/davidbendet/Work/coding/src/data_warehouse/tmp_data/line_items
 
 # send csv to s3
 s3 = boto3.client('s3', aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
-df = pd.read_csv('~/work/coding/src/data_warehouse/tmp_data/line_items/' + csv_name + '.csv')
+df = pd.read_csv(work_path + '/tmp_data/line_items/' + csv_name + '.csv')
 csv_buffer = StringIO()
 df.to_csv(csv_buffer, index=False)
 s3_resource = boto3.resource('s3')
