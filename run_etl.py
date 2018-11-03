@@ -29,7 +29,7 @@ work_path = '/home/ec2-user/src/data_warehouse/'
 
 start_time = datetime.now() #timing script 
 
-redshift_user = os.envi`ron['REDSHIFT_USER']
+redshift_user = os.environ['REDSHIFT_USER']
 redshift_db = os.environ['REDSHIFT_DB']
 redshift_host = os.environ['REDSHIFT_HOST']
 
@@ -135,15 +135,3 @@ print('\nredshift population attempted (but not confirmed)')
 print('\nscript run time: ' + str(datetime.now() - start_time))
 
 # run some other check to make sure table is populated
-
-
-
-copy lito.line_items from 's3://lito-misc/data/line_items/line_items_20170101_20181101.csv'
-credentials 'aws_iam_role=arn:aws:iam::803205066366:role/myRedshiftRole' 
-delimiter ',' 
-region 'us-east-1'
-IGNOREHEADER 1
-removequotes 
-emptyasnull 
-blanksasnull
-; 

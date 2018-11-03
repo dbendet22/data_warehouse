@@ -154,7 +154,7 @@ for item in line_items_list:
 
 # output the list (which is now a list of dictionaries) to a csv
 keys = ['id', 'order_id', 'created_at', 'created_at_est', '_sku', 'name', 'price', 'quantity', 'title', 'variant_title', 'total_discount', 'fulfillable_quantity', 'fulfillment_status', 'gift_card', 'grams', 'product_exists', 'product_id', '_inventory', 'requires_shipping', 'sku', 'tax_lines', 'taxable', 'variant_id', 'variant_inventory_management', 'vendor', 'estimated_ship_date', '_inventory_source', 'test', 'total_tax', 'financial_status', 'cancelled_at', 'order_discount_amount', 'country', 'state', 'city', 'zip_code', 'email', 'first_name', 'last_name', 'orders_count']
-with open('/Users/davidbendet/Work/coding/src/data_warehouse/tmp_data/line_items/' + csv_name + '.csv', 'w') as output_file:
+with open(work_path + 'tmp_data/line_items/' + csv_name + '.csv', 'w') as output_file:
 	dict_writer = csv.DictWriter(output_file, keys)
 	dict_writer.writeheader()
 	for line_items in line_items_list:	    
