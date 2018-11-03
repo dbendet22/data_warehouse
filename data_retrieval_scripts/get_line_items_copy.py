@@ -25,8 +25,6 @@ import sys
 import datetime
 import pytz
 
-work_path = '/home/ec2-user/src/data_warehouse/'
-
 # last day of data (or backfill)
 # yesterday = sys.argv[1]
 yesterday_date = sys.argv[1]
@@ -201,7 +199,7 @@ with open('/Users/davidbendet/Work/coding/src/data_warehouse/tmp_data/line_items
 
 # send csv to s3
 s3 = boto3.client('s3', aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
-df = pd.read_csv(work_path + '/tmp_data/line_items/' + csv_name + '.csv')
+df = pd.read_csv('~/work/coding/src/data_warehouse/tmp_data/line_items/' + csv_name + '.csv')
 csv_buffer = StringIO()
 df.to_csv(csv_buffer, index=False)
 s3_resource = boto3.resource('s3')

@@ -25,8 +25,6 @@ from io import StringIO
 from datetime import datetime, timedelta
 import sys
 
-work_path = '/home/ec2-user/src/data_warehouse/'
-
 start_time = datetime.now() #timing script 
 
 redshift_user = os.envi`ron['REDSHIFT_USER']
@@ -62,7 +60,7 @@ print(today_date + ' for today_date\n')
 #################################################################################################################################################
 # populate orders table
 #################################################################################################################################################
-orders_yesterday_file_path_local = work_path + 'table_scripts/orders/orders_table_' + yesterday + '_' + today + '.sql'
+orders_yesterday_file_path_local = '/Users/davidbendet/Work/coding/src/data_warehouse/table_scripts/orders/orders_table_' + yesterday + '_' + today + '.sql'
 
 orders_yesterday_file_path_s3 = 's3://lito-misc/data/orders/orders_' + yesterday + '_' + today + '.csv'
 
@@ -88,7 +86,7 @@ print('\ncreated s3 file:' + orders_yesterday_file_path_s3)
 #################################################################################################################################################
 # populate line items table
 #################################################################################################################################################
-line_items_yesterday_file_path_local = work_path + 'table_scripts/line_items/line_items_table_' + yesterday + '_' + today + '.sql'
+line_items_yesterday_file_path_local = '/Users/davidbendet/Work/coding/src/data_warehouse/table_scripts/line_items/line_items_table_' + yesterday + '_' + today + '.sql'
 
 line_items_yesterday_file_path_s3 = 's3://lito-misc/data/line_items/line_items_' + yesterday + '_' + today + '.csv'
 
@@ -118,7 +116,7 @@ print('\ncreated s3 file: ' + str(line_items_yesterday_file_path_s3))
 populate_s3_files = ['get_orders_from_api.py', 'get_line_items_from_api.py']
 
 for file in populate_s3_files:
-	this_file = work_path + 'data_retrieval_scripts/' + file 
+	this_file = '/Users/davidbendet/work/coding/src/data_warehouse/data_retrieval_scripts/' + file 
 	arguments = yesterday_date + ' ' + today_date
 	os.system('python' + ' ' + this_file + ' ' + arguments)
 

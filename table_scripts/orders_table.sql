@@ -59,6 +59,9 @@ create table if not exists lito.orders (
 	customer_state varchar(64),
 	customer_city varchar(1024),
 	customer_zip varchar(64),
+	customer_email varchar(128),
+	customer_first_name varchar(128),
+	customer_last_name varchar(128),
 	shipping_code varchar(64),
 	orders_count varchar(64),
 	user_agent varchar(1024))

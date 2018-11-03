@@ -36,5 +36,8 @@ create table if not exists lito.line_items (
 	order_state varchar(64),
 	order_city varchar(64),
 	order_zip_code varchar(64),
+	customer_email varchar(128),
+	customer_first_name varchar(128),
+	customer_last_name varchar(128),	
 	orders_count varchar(64))
 ;
