@@ -26,6 +26,7 @@ import datetime
 import pytz
 
 work_path = '/home/ec2-user/src/data_warehouse/'
+# work_path = '/Users/davidbendet/Work/coding/src/data_warehouse/'
 
 # last day of data (or backfill)
 # yesterday = sys.argv[1]
