@@ -37,10 +37,10 @@ today = today_date.replace('-','')
 csv_name = 'orders_' + yesterday + '_' + today
 
 # # if i only wanted to backfill this table specifically, i could do this: 
-# # yesterday = '20180710'
-# yesterday_date = '2018-07-10'
-# today_date = '2018-10-26'
-# today_date = datetime.strftime(datetime.strptime(today_date, '%Y-%m-%d') + timedelta(1), '%Y-%m-%d')
+# yesterday = '20180710'
+# yesterday_date = '2017-01-01'
+# today_date = '2018-11-04'
+# today_date = datetime.datetime.strftime(datetime.datetime.strptime(today_date, '%Y-%m-%d') + timedelta(1), '%Y-%m-%d')
 # yesterday = yesterday_date.replace('-','')
 # today = today_date.replace('-','')
 # csv_name = 'orders_' + yesterday + '_' + today
@@ -103,6 +103,7 @@ f.writerow(['id',
 			'total_weight', 
 			'total_tax', 
 			'taxes_included',
+			'shipping_fee',
 			'currency',
 			'financial_status',
 			'confirmed',
@@ -147,6 +148,7 @@ f.writerow(['id',
 			'name',
 			'product_exists', 
 			'fulfillable_quantity', 
+			'first_note_attribute',
 			'customer_country',
 			'customer_state',
 			'customer_city',
@@ -172,6 +174,7 @@ for page in orders:
 					thing['total_weight'],
 					thing['total_tax'], 
 					thing['taxes_included'],
+					thing['total_shipping_price_set']['shop_money']['amount'],
 					thing['currency'],
 					thing['financial_status'],
 					thing['confirmed'],
@@ -215,7 +218,8 @@ for page in orders:
 					thing['line_items'][0]['gift_card'],
 					thing['line_items'][0]['name'],
 					thing['line_items'][0]['product_exists'],
-					thing['line_items'][0]['fulfillable_quantity'],					
+					thing['line_items'][0]['fulfillable_quantity'],		
+					thing.get('note_attributes')[0]['name'] if thing.get('note_attributes') else None,			
 					thing.get('customer')['default_address']['country'] if thing.get('customer') else None,
 					thing.get('customer')['default_address']['province'] if thing.get('customer') else None,
 					thing.get('customer')['default_address']['city'] if thing.get('customer') else None,
@@ -237,3 +241,18 @@ csv_buffer = StringIO()
 df.to_csv(csv_buffer, index=False)
 s3_resource = boto3.resource('s3')
 s3_resource.Object('lito-misc', 'data/orders/' + csv_name + '.csv').put(Body=csv_buffer.getvalue())
+
+
+
+# orders_yesterday_file_path_s3 = 's3://lito-misc/data/orders/orders_' + yesterday + '_' + today + '.csv'
+# # 's3://lito-misc/data/orders/orders_20171101_20171110.csv'
+# copy lito.orders from 's3://lito-misc/data/orders/orders_20170101_20181105.csv'
+# credentials 'aws_iam_role=arn:aws:iam::803205066366:role/myRedshiftRole' 
+# delimiter ',' 
+# region 'us-east-1'
+# IGNOREHEADER 1
+# CSV QUOTE AS '"'
+# -- removequotes 
+# emptyasnull 
+# blanksasnull
+# ;
