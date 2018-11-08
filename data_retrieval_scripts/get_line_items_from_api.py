@@ -25,8 +25,8 @@ import sys
 import datetime
 import pytz
 
-work_path = '/home/ec2-user/src/data_warehouse/'
-# work_path = '/Users/davidbendet/Work/coding/src/data_warehouse/'
+# work_path = '/home/ec2-user/src/data_warehouse/'
+work_path = '/Users/davidbendet/Work/coding/src/data_warehouse/'
 
 # last day of data (or backfill)
 # yesterday = sys.argv[1]
@@ -207,3 +207,17 @@ csv_buffer = StringIO()
 df.to_csv(csv_buffer, index=False)
 s3_resource = boto3.resource('s3')
 s3_resource.Object('lito-misc', 'data/line_items/' + csv_name + '.csv').put(Body=csv_buffer.getvalue())
+
+
+# line_items_yesterday_file_path_s3 = 's3://lito-misc/data/line_items/line_items_' + yesterday + '_' + today + '.csv'
+# 's3://lito-misc/data/line_items/line_items_20171101_20180101.csv'
+copy lito.line_items from 's3://lito-misc/data/line_items/line_items_20170101_20180101.csv'
+credentials 'aws_iam_role=arn:aws:iam::803205066366:role/myRedshiftRole' 
+delimiter ',' 
+region 'us-east-1'
+IGNOREHEADER 1
+CSV QUOTE AS '"'
+-- removequotes 
+emptyasnull 
+blanksasnull
+;

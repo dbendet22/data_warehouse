@@ -25,8 +25,8 @@ import sys
 import datetime
 import pytz
 
-work_path = '/home/ec2-user/src/data_warehouse/'
-# work_path = '/Users/davidbendet/Work/coding/src/data_warehouse/'
+# work_path = '/home/ec2-user/src/data_warehouse/'
+work_path = '/Users/davidbendet/Work/coding/src/data_warehouse/'
 
 # last day of data (or backfill)
 # yesterday = sys.argv[1]
@@ -37,13 +37,12 @@ today = today_date.replace('-','')
 csv_name = 'orders_' + yesterday + '_' + today
 
 # # if i only wanted to backfill this table specifically, i could do this: 
-# yesterday = '20180710'
-# yesterday_date = '2017-01-01'
-# today_date = '2018-11-04'
-# today_date = datetime.datetime.strftime(datetime.datetime.strptime(today_date, '%Y-%m-%d') + timedelta(1), '%Y-%m-%d')
-# yesterday = yesterday_date.replace('-','')
-# today = today_date.replace('-','')
-# csv_name = 'orders_' + yesterday + '_' + today
+yesterday_date = '2018-01-16'
+today_date = '2018-11-07'
+today_date = datetime.datetime.strftime(datetime.datetime.strptime(today_date, '%Y-%m-%d') + timedelta(1), '%Y-%m-%d')
+yesterday = yesterday_date.replace('-','')
+today = today_date.replace('-','')
+csv_name = 'orders_' + yesterday + '_' + today
   
 def get_api_login():
     admin_url = os.environ['RETAIL_ADMIN_URL']
@@ -162,74 +161,77 @@ f.writerow(['id',
 
 # write each row of data for each page into a csv 
 for page in orders:
-	for thing in page['orders']:
-		f.writerow([thing['id'], 
-					pd.to_datetime(thing['closed_at']), 
-					pd.to_datetime(thing['created_at']), 
-					pytz.utc.localize( pd.to_datetime(thing['created_at'])).astimezone(pytz.timezone('America/New_York')), 
-					thing['number'], 
-					thing['test'], 
-					thing['total_price'],
-					thing['subtotal_price'],
-					thing['total_weight'],
-					thing['total_tax'], 
-					thing['taxes_included'],
-					thing['total_shipping_price_set']['shop_money']['amount'],
-					thing['currency'],
-					thing['financial_status'],
-					thing['confirmed'],
-					thing['total_discounts'],
-					thing['total_line_items_price'],
-					pd.to_datetime(thing['cancelled_at']),
-					thing['cancel_reason'],
-					thing['total_price_usd'],
-					thing['reference'],
-					thing['user_id'],
-					thing['location_id'],
-					thing['source_identifier'],
-					thing['source_url'],
-					pd.to_datetime(thing['processed_at']),
-					thing['device_id'],
-					thing['customer_locale'],
-					thing['app_id'],
-					thing['browser_ip'],
-					thing['landing_site_ref'],
-					thing['order_number'],
-					thing['discount_codes'][0]['code'] if thing['discount_codes'] else 0,
-					thing['discount_codes'][0]['amount'] if thing['discount_codes'] else 0,
-					thing['discount_codes'][0]['type'] if thing['discount_codes'] else 'Blank',
-					thing['payment_gateway_names'],
-					thing['processing_method'],
-					thing['checkout_id'],
-					thing['source_name'],
-					thing['fulfillment_status'],
-					thing['tags'],
-					thing['line_items'][0]['variant_id'],
-					thing['line_items'][0]['title'],
-					thing['line_items'][0]['quantity'],
-					thing['line_items'][0]['price'],
-					thing['line_items'][0]['sku'],
-					thing['line_items'][0]['variant_title'],
-					thing['line_items'][0]['vendor'],
-					thing['line_items'][0]['fulfillment_service'],
-					thing['line_items'][0]['product_id'],
-					thing['line_items'][0]['requires_shipping'],
-					thing['line_items'][0]['taxable'],
-					thing['line_items'][0]['gift_card'],
-					thing['line_items'][0]['name'],
-					thing['line_items'][0]['product_exists'],
-					thing['line_items'][0]['fulfillable_quantity'],		
-					thing.get('note_attributes')[0]['name'] if thing.get('note_attributes') else None,			
-					thing.get('customer')['default_address']['country'] if thing.get('customer') else None,
-					thing.get('customer')['default_address']['province'] if thing.get('customer') else None,
-					thing.get('customer')['default_address']['city'] if thing.get('customer') else None,
-					thing.get('customer')['default_address']['zip'] if thing.get('customer') else None,	
-					thing.get('customer')['email'] if thing.get('customer') else None,
-					thing.get('customer')['first_name'] if thing.get('customer') else None,
-					thing.get('customer')['last_name'] if thing.get('customer') else None,
-					thing.get('shipping_lines')[0]['code'] if thing.get('shipping_lines') else None,
-					thing.get('customer')['orders_count'] if thing.get('customer') else None,
-					thing.get('client_details')['user_agent'] if thing.get('client_details') else None])
+	for thing in page.get('orders') if page.get('orders') else 'hi':
+		if str(type(thing).__name__) == 'dict':
+			f.writerow([thing['id'], 
+						pd.to_datetime(thing['closed_at']), 
+						pd.to_datetime(thing['created_at']), 
+						pytz.utc.localize( pd.to_datetime(thing['created_at'])).astimezone(pytz.timezone('America/New_York')), 
+						thing['number'], 
+						thing['test'], 
+						thing['total_price'],
+						thing['subtotal_price'],
+						thing['total_weight'],
+						thing['total_tax'], 
+						thing['taxes_included'],
+						thing['total_shipping_price_set']['shop_money']['amount'],
+						thing['currency'],
+						thing['financial_status'],
+						thing['confirmed'],
+						thing['total_discounts'],
+						thing['total_line_items_price'],
+						pd.to_datetime(thing['cancelled_at']),
+						thing['cancel_reason'],
+						thing['total_price_usd'],
+						thing['reference'],
+						thing['user_id'],
+						thing['location_id'],
+						thing['source_identifier'],
+						thing['source_url'],
+						pd.to_datetime(thing['processed_at']),
+						thing['device_id'],
+						thing['customer_locale'],
+						thing['app_id'],
+						thing['browser_ip'],
+						thing['landing_site_ref'],
+						thing['order_number'],
+						thing['discount_codes'][0]['code'] if thing['discount_codes'] else 0,
+						thing['discount_codes'][0]['amount'] if thing['discount_codes'] else 0,
+						thing['discount_codes'][0]['type'] if thing['discount_codes'] else 'Blank',
+						thing['payment_gateway_names'],
+						thing['processing_method'],
+						thing['checkout_id'],
+						thing['source_name'],
+						thing['fulfillment_status'],
+						thing['tags'],
+						thing['line_items'][0]['variant_id'],
+						thing['line_items'][0]['title'],
+						thing['line_items'][0]['quantity'],
+						thing['line_items'][0]['price'],
+						thing['line_items'][0]['sku'],
+						thing['line_items'][0]['variant_title'],
+						thing['line_items'][0]['vendor'],
+						thing['line_items'][0]['fulfillment_service'],
+						thing['line_items'][0]['product_id'],
+						thing['line_items'][0]['requires_shipping'],
+						thing['line_items'][0]['taxable'],
+						thing['line_items'][0]['gift_card'],
+						thing['line_items'][0]['name'],
+						thing['line_items'][0]['product_exists'],
+						thing['line_items'][0]['fulfillable_quantity'],		
+						thing.get('note_attributes')[0]['name'] if thing.get('note_attributes') else None,			
+						thing.get('customer')['default_address']['country'] if thing.get('customer') else None,
+						thing.get('customer')['default_address']['province'] if thing.get('customer') else None,
+						thing.get('customer')['default_address']['city'] if thing.get('customer') else None,
+						thing.get('customer')['default_address']['zip'] if thing.get('customer') else None,	
+						thing.get('customer')['email'] if thing.get('customer') else None,
+						thing.get('customer')['first_name'] if thing.get('customer') else None,
+						thing.get('customer')['last_name'] if thing.get('customer') else None,
+						thing.get('shipping_lines')[0]['code'] if thing.get('shipping_lines') else None,
+						thing.get('customer')['orders_count'] if thing.get('customer') else None,
+						thing.get('client_details')['user_agent'] if thing.get('client_details') else None])
+		else:
+			pass
 
 # close csv file
 csv_data.close()
@@ -246,7 +248,7 @@ s3_resource.Object('lito-misc', 'data/orders/' + csv_name + '.csv').put(Body=csv
 
 # orders_yesterday_file_path_s3 = 's3://lito-misc/data/orders/orders_' + yesterday + '_' + today + '.csv'
 # # 's3://lito-misc/data/orders/orders_20171101_20171110.csv'
-# copy lito.orders from 's3://lito-misc/data/orders/orders_20170101_20181105.csv'
+# copy lito.orders from 's3://lito-misc/data/orders/orders_20180116_20181108.csv'
 # credentials 'aws_iam_role=arn:aws:iam::803205066366:role/myRedshiftRole' 
 # delimiter ',' 
 # region 'us-east-1'
