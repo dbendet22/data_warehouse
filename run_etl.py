@@ -25,8 +25,8 @@ from io import StringIO
 from datetime import datetime, timedelta
 import sys
 
-work_path = '/home/ec2-user/src/data_warehouse/'
-# work_path = '/Users/davidbendet/Work/coding/src/data_warehouse/'
+# work_path = '/home/ec2-user/src/data_warehouse/'
+work_path = '/Users/davidbendet/Work/coding/src/data_warehouse/'
 
 start_time = datetime.now() #timing script 
 
